@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <title>ASCIIdunno</title>
+    <style>
+     body, input {
+       font-family: monospace;
+       font-size: 20px;
+     }
+     input {
+       font-size: 50px;
+     }
+     form {
+       padding: 1em;
+     }
+     #shrug {
+       font-size: 100px;
+       line-height: 1em;
+     }
+    </style>
+  </head>
+  <body>
+    <div id="shrug">&nbsp;</div>
+
+    <h1 id="game"></h1>
+    <h1>Letters guessed so far</h1>
+
+    <div id="missedGuesses">&nbsp;</div>
+
+    <form>
+      <input id="guess" size="1" maxlength="1">
+      <input id="submit" type="submit">
+    </form>
+
+    <script>
+     var shrug = "¯\\_(ツ)_/¯"
+     var secret = "pufferfish".split('')
+
+     var missedAttempts = 0
+
+     var guessed = []
+
+     var $game = document.getElementById('game');
+     var $shrug = document.getElementById('shrug');
+     var $missedGuesses = document.getElementById('missedGuesses')
+
+     displayGuess()
+
+     var $input = document.getElementById('guess')
+     $input.focus()
+
+     var $submit = document.getElementById('submit')
+     var $form = document.querySelector('form')
+
+     function displayGuess() {
+       $game.innerHTML = secret.map(
+           letter => guessed.includes(letter) ? letter : '_'
+        ).join(' ')
+     }
+
+     function displayShrug() {
+       $shrug.innerHTML = shrug.slice(0, missedAttempts)
+     }
+
+     function handleGuess(guess) {
+       if (secret.includes(guess)) {
+         guessed.push(guess)
+         displayGuess()
+         if (secret.every(letter => guessed.includes(letter))) {
+           $shrug.innerHTML = '\\( ﾟヮﾟ)/'
+         }
+       } else {
+         $missedGuesses.innerHTML += guess
+         missedAttempts++
+         if (missedAttempts === shrug.length) {
+           $input.disabled = true
+           $submit.disabled = true
+         }
+         displayShrug()
+       }
+     }
+
+     $form.onsubmit = () => {
+       var guess = $input.value
+       $input.value = ''
+
+       handleGuess(guess)
+
+       return false
+     }
+    </script>
+  </body>
+</html>
